@@ -13,7 +13,7 @@
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
-          <router-link to="/Demo1">
+          <router-link to="/Demo1" class="NoUnderline">
             <v-list-item
               prepend-icon="mdi-folder"
               title="My Files"
@@ -36,9 +36,34 @@
       <v-main class="h-100">
         <HeaderPage />
         <div class="ContentBody">
+          <v-app-bar scroll-behavior="hide collapse elevate">
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-btn color="primary" v-bind="props"
+                  ><i class="fi fi-br-menu-burger"></i
+                ></v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="(item, index) in items"
+                  :key="index"
+                  :value="index"
+                >
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <template v-slot:append>
+              <v-btn icon="mdi-heart"></v-btn>
+
+              <v-btn icon="mdi-magnify"></v-btn>
+
+              <v-btn icon="mdi-dots-vertical"></v-btn>
+            </template>
+          </v-app-bar>
           <router-view></router-view>
         </div>
-        <footer class="textMid">End</footer>
+        <FooterPage />
       </v-main>
     </v-layout>
   </v-card>
@@ -46,10 +71,20 @@
 
 <script>
 import HeaderPage from "@/components/HeaderPage.vue";
+import FooterPage from "./components/FooterPage.vue";
 export default {
   name: "App",
-  components: { 
-    HeaderPage 
+  components: {
+    HeaderPage,
+    FooterPage,
   },
+  data: () => ({
+    items: [
+      { title: "Click Me" },
+      { title: "Click Me" },
+      { title: "Click Me" },
+      { title: "Click Me 2" },
+    ],
+  }),
 };
 </script>
