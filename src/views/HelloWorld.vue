@@ -1,4 +1,9 @@
 <template>
+  <v-col class="textMid">
+    <h1>ทดลองเล่น Vuetify</h1>
+    <h2>ทดลอง grid row col routerVue css คล้ายๆ Tailwind</h2>
+    <router-link to="/"><v-btn>กลับไปหน้าแรก</v-btn></router-link>
+  </v-col>
   <v-row>
     <v-col cols="12" sm="6" md="3" lg="3" xl="3" xxl="3"><CardTest /></v-col>
     <v-col cols="12" sm="6" md="3" lg="3" xl="3" xxl="3"><CardTest /></v-col>
@@ -34,6 +39,10 @@
       </v-card>
     </v-col>
   </v-row>
+  <v-col class="textMid">
+    <h1>ทดสอบใช้ Leafle Vue</h1>
+    <h2>(ไลบราลี่มันเป็น vue2)</h2>
+  </v-col>
   <v-row>
     <v-col cols="12">
       <div style="height: 100%; width: 100%">
@@ -44,13 +53,37 @@
       </div>
     </v-col>
   </v-row>
+  <v-col class="textMid">
+    <h1>ทดสอบดึงข้อมูลด้วย WatchEffect (เหมือนตอนใช้ useEffect ของ React)</h1>
+    <h2>(ดึงข้อมูลจาก dummyjson)</h2>
+  </v-col>
+
+  <v-row>
+    <v-col
+      cols="12"
+      sm="6"
+      md="4"
+      lg="3"
+      xl="2"
+      xxl="2"
+      v-for="item in apiData.products"
+      :key="item.id"
+    >
+      <v-card class="h-100" hover>
+        <v-card-title class="textColor">{{ item.title }}</v-card-title>
+        <v-card-text class="textColor">{{ item.description }}</v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import CardTest from "@/components/CardTest.vue";
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
+import axios from "axios";
+
 export default {
   name: "HelloWorld",
   components: {
@@ -128,9 +161,20 @@ export default {
         habitat: "Savanna, Forests",
       },
     ]);
-    return {
-      items,
-    };
+    const apiData = ref([]);
+    watchEffect(() => {
+      axios
+        .get("https://dummyjson.com/products")
+        .then((response) => {
+          apiData.value = response.data;
+          console.log(apiData);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    });
+
+    return { items, apiData };
   },
 };
 </script>
