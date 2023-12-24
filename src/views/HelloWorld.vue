@@ -16,7 +16,9 @@
   </v-row>
   <v-row>
     <v-col cols="12">
-      <v-card> <v-data-table :items="items"></v-data-table> </v-card>
+      <v-card>
+        <v-data-table :items="items"></v-data-table>
+      </v-card>
     </v-col>
   </v-row>
   <v-row>
@@ -54,7 +56,7 @@
     </v-col>
   </v-row>
   <v-col class="textMid">
-    <h1>ทดสอบดึงข้อมูลด้วย WatchEffect (เหมือนตอนใช้ useEffect ของ React)</h1>
+    <h1>ทดสอบดึงข้อมูลด้วย WatchEffect (เหมือนตอนใช้ useEffect ของ React ทำงานแบบ Realtime)</h1>
     <h2>(ดึงข้อมูลจาก dummyjson)</h2>
   </v-col>
 
@@ -75,11 +77,35 @@
       </v-card>
     </v-col>
   </v-row>
+  <v-col class="textMid">
+    <h1>ทดสอบดึงข้อมูลด้วย onMounted (เหมือนตอนใช้ useEffect ของ React แต่ทำงานครั้งเดียว)</h1>
+    <h2>(ดึงข้อมูลจาก dummyjson)</h2>
+  </v-col>
+  <v-row>
+    <v-col
+      cols="12"
+      sm="6"
+      md="4"
+      lg="3"
+      xl="2"
+      xxl="2"
+      :key="apiDataOnMounted.id"
+    >
+      <v-card class="h-100" hover>
+        <v-card-title class="textColor">{{
+          apiDataOnMounted.title
+        }}</v-card-title>
+        <v-card-text class="textColor">{{
+          apiDataOnMounted.description
+        }}</v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import CardTest from "@/components/CardTest.vue";
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, onMounted } from "vue";
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 import axios from "axios";
@@ -162,19 +188,32 @@ export default {
       },
     ]);
     const apiData = ref([]);
+    const apiDataOnMounted = ref([]);
+
     watchEffect(() => {
       axios
         .get("https://dummyjson.com/products")
         .then((response) => {
           apiData.value = response.data;
-          console.log(apiData);
+          //console.log(apiData);
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
     });
 
-    return { items, apiData };
+    onMounted(() => {
+      axios
+        .get("https://dummyjson.com/products/1") // Fetch data from a specific product
+        .then((response) => {
+          apiDataOnMounted.value = response.data; // Wrap the response data in an array
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    });
+    return { items, apiData, apiDataOnMounted };
   },
 };
 </script>
